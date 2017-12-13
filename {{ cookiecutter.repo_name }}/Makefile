@@ -5,7 +5,7 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-BUCKET = {{ cookiecutter.s3_bucket }}
+BUCKET = {{ cookiecutter.s3_bucket }}/cookiecutter-data-science/{{ cookiecutter.repo_name }}
 PROFILE = {{ cookiecutter.aws_profile }}
 PROJECT_NAME = {{ cookiecutter.repo_name }}
 PYTHON_INTERPRETER = {{ cookiecutter.python_interpreter }}
@@ -39,9 +39,9 @@ lint:
 ## Upload Data to S3
 sync_data_to_s3:
 ifeq (default,$(PROFILE))
-	aws s3 sync data/ s3://$(BUCKET)/data/
+	aws s3 sync data/ s3://$(BUCKET)/data/ --acl bucket-owner-full-control --exclude "*.gitkeep"
 else
-	aws s3 sync data/ s3://$(BUCKET)/data/ --profile $(PROFILE)
+	aws s3 sync data/ s3://$(BUCKET)/data/ --profile $(PROFILE) --acl bucket-owner-full-control --exclude "*.gitkeep"
 endif
 
 ## Download Data from S3
