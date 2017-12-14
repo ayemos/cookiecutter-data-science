@@ -1,4 +1,4 @@
-.PHONY: clean data lint requirements sync_data_to_s3 sync_data_from_s3
+.PHONY: clean data lint requirements sync_data_to_s3 sync_data_from_s3 sync_models_to_s3 sync_models_from_s3
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -50,6 +50,22 @@ ifeq (default,$(PROFILE))
 	aws s3 sync s3://$(BUCKET)/data/ data/
 else
 	aws s3 sync s3://$(BUCKET)/data/ data/ --profile $(PROFILE)
+endif
+
+## Upload Models to S3
+sync_models_to_s3:
+ifeq (default,$(PROFILE))
+	aws s3 sync models/ s3://$(BUCKET)/models/ --acl bucket-owner-full-control --exclude "*.gitkeep"
+else
+	aws s3 sync models/ s3://$(BUCKET)/models/ --profile $(PROFILE) --acl bucket-owner-full-control --exclude "*.gitkeep"
+endif
+
+## Download Models from S3
+sync_models_from_s3:
+ifeq (default,$(PROFILE))
+	aws s3 sync s3://$(BUCKET)/models/ models/
+else
+	aws s3 sync s3://$(BUCKET)/models/ models/ --profile $(PROFILE)
 endif
 
 ## Set up python interpreter environment
